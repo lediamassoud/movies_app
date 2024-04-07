@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:movie/search/search_list_view.dart';
 
+import '../model/one_movie_dm.dart';
+
 class SearchHome extends StatefulWidget {
   static const routeName = "search_home";
-  List<String> allTitles;
-  SearchHome({super.key,required this.allTitles});
+  List<OneMovieDM> allMovies;
+  SearchHome({super.key, required this.allMovies});
   bool selectedWidget = true;
 
   @override
@@ -12,6 +14,7 @@ class SearchHome extends StatefulWidget {
 }
 
 class _SearchHomeState extends State<SearchHome> {
+  TextEditingController controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,28 +34,38 @@ class _SearchHomeState extends State<SearchHome> {
             child: InkWell(
               onTap: () {
                 widget.selectedWidget = false;
-                setState(() {
-
-                });
+                setState(() {});
               },
               child: TextField(
-                 onChanged: onQueryChanged,
-                decoration: const InputDecoration(
+                controller:controller,
+                onChanged: onQueryChanged,
+                decoration: InputDecoration(
                     hintText: 'Search',
-                    hintStyle: TextStyle(color: Colors.grey),
-                    prefixIcon: Icon(
-                      Icons.search,
-                      color: Colors.black,
-                    ),
-                    suffixIcon: Icon(
-                      Icons.close_outlined,
-                      color: Colors.black,
+                    hintStyle: const TextStyle(color: Colors.grey),
+                    prefixIcon: IconButton(
+                        onPressed: () {
+                          onQueryChanged;
+                        },
+                        icon: const Icon(
+                          Icons.search,
+                          color: Colors.black,
+                        )),
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        widget.selectedWidget = true; //movie icon
+                        controller = TextEditingController();
+                        setState(() {});
+                      },
+                      icon:
+                          const Icon(Icons.close_outlined, color: Colors.black),
                     )),
               ),
             ),
           ),
         ),
-        body: widget.selectedWidget == true ? localMoviesIcon() :  SearchListView(searchResults: searchResults));
+        body: widget.selectedWidget == true
+            ? localMoviesIcon()
+            : SearchListView(searchResults: moviesSearchResults));
   }
 
   Widget localMoviesIcon() {
@@ -66,12 +79,22 @@ class _SearchHomeState extends State<SearchHome> {
   }
 
   List<String> searchResults = [];
+  List<OneMovieDM> moviesSearchResults = [];
   void onQueryChanged(String searchWord) {
-    searchResults = widget.allTitles
-        .where((title) => title!.contains(searchWord.toLowerCase()))
-        .toList();
+    widget.selectedWidget = false;
+    for (OneMovieDM movieDM in widget.allMovies) {
+      if (movieDM.title.contains(searchWord.toLowerCase())) {
+        moviesSearchResults.add(movieDM);
+      }
+    }
+
+    // searchResults = widget.allTitles
+    //     .where((title) => title!.contains(searchWord.toLowerCase()))
+    //     .toList();
+
+    SearchListView(searchResults: moviesSearchResults);
+    setState(() {});
     print("==========================================");
-    print(widget.allTitles);
-    print(searchResults);
+    print(widget.allMovies);
   }
 }

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:movie/model/one_movie_dm.dart';
+import 'package:movie/show_movies/show_one_movie.dart';
 
 
 class SearchListView extends StatefulWidget {
-  List<String> searchResults = [];
+
+  List<OneMovieDM> searchResults = [];
   SearchListView({super.key,required this.searchResults});
 
   @override
@@ -12,20 +15,18 @@ class SearchListView extends StatefulWidget {
 class _SearchListViewState extends State<SearchListView> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.lightGreenAccent,
-      child: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: widget.searchResults.length,
-              itemBuilder: (context, index) {
-                return Text(widget.searchResults[index]);
-              },
-            ),
+    return Column(
+      children: [
+        Expanded(
+          child: ListView.builder(
+            itemCount: widget.searchResults.length,
+            itemBuilder: (context, index) {
+              return ShowOneMovie(movie: widget.searchResults[index]);
+              //Text(widget.searchResults[index]);
+            },
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

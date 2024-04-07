@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:movie/api/api_manager.dart';
+import 'package:movie/model/one_movie_dm.dart';
 import 'package:movie/search/search_home.dart';
 import 'package:movie/search/search_list_view.dart';
 
 import '../model/results.dart';
 
 class ShowMovies extends StatelessWidget {
+  static const String routeName = "show_movies";
   ShowMovies({super.key});
 
   late var resultsList;
@@ -34,19 +36,35 @@ class ShowMovies extends StatelessWidget {
         } else {
           //when data return right
           resultsList = snapshot.data!.results;
-          return SearchHome(allTitles: getTitlesList()!);
+          return SearchHome(
+            allMovies: getMoviesList(),
+          );
         }
       },
     );
   }
 
-  List<String> getTitlesList() {
-    List<String> allTitles = [];
-    print("------------------------------------");
-    print(resultsList);
+  List<OneMovieDM> getMoviesList() {
+    List<OneMovieDM> allMovies = [];
+
     for (Results result in resultsList) {
-      allTitles.add(result.originalTitle!.toLowerCase());
+      OneMovieDM movieDM = OneMovieDM(
+          imagePath: "https://image.tmdb.org/t/p/original" + result.posterPath!,
+          title: result.title!,
+          releaseDate: result.releaseDate!,
+          author: result.originalTitle!);
+
+      allMovies.add(movieDM);
     }
-    return allTitles;
+    return allMovies;
   }
+  // List<String> getTitlesList() {
+  //   List<String> allTitles = [];
+  //   print("------------------------------------");
+  //   print(resultsList);
+  //   for (Results result in resultsList) {
+  //     allTitles.add(result.originalTitle!.toLowerCase());
+  //   }
+  //   return allTitles;
+  // }
 }
